@@ -12,14 +12,13 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='sample',
+    name='Wallet',
     version='0.1.0',
-    description='Sample package for Python-Guide.org',
+    description='Wallet for BuyWithTokens.org',
     long_description=readme,
-    author='Kenneth Reitz',
-    author_email='me@kennethreitz.com',
-    url='https://github.com/kennethreitz/samplemod',
+    author='Arnon Hongklay',
+    author_email='arnon@hongklay.com',
+    url='https://github.com/arnonhongklay/wallet',
     license=license,
     packages=find_packages(exclude=('tests', 'docs'))
 )
-
