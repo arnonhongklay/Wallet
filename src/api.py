@@ -1,57 +1,47 @@
-from flask import request, url_for
-from flask_api import FlaskAPI, status, exceptions
+import json
+import os
 
-app = FlaskAPI(__name__)
+from flask import Flask
+from flask import request
+from flask import make_response
+
+from pywallet import wallet
+
+app = Flask(__name__)
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    req = request.get_json(silent=True, force=True)
+    res = json.dumps(res, indent=4)
+    r = make_response(res)
+    r.headers['Content-Type'] = 'application/json'
+    return r
+
+def processRequest(req):
+    req_dist = json.loads(request.data)
+    print(req_dist)
+
+    intent = req_dist['queryResult']['intent']['displayName']
+
+    if intent == 'ถามหนังน่ารดู'
+        speech = 'ได้เลย'
+    else:
+        speech = "ผมไม่เข้าใจ คุณต้องการอะไร"
+
+    res = makeWebhookResult(speech)
+    return res
 
 
-notes = {
-    0: 'do the shopping',
-    1: 'build the codez',
-    2: 'paint the door',
-}
+def makeWebhookResult(speech):
 
-
-def note_repr(key):
     return {
-        'url': request.host_url.rstrip('/') + url_for('notes_detail', key=key),
-        'text': notes[key]
+        "fulfillmentText": speech
     }
 
 
-@app.route("/", methods=['GET', 'POST'])
-def notes_list():
-    """
-    List or create notes.
-    """
-    if request.method == 'POST':
-        note = str(request.data.get('text', ''))
-        idx = max(notes.keys()) + 1
-        notes[idx] = note
-        return note_repr(idx), status.HTTP_201_CREATED
+if __name__ == '__main__':
+    port = int(os.getenv('PORT', 5000))
 
-    # request.method == 'GET'
-    return [note_repr(idx) for idx in sorted(notes.keys())]
+    print("Starting app on port %d" % port)
 
-
-@app.route("/<int:key>/", methods=['GET', 'PUT', 'DELETE'])
-def notes_detail(key):
-    """
-    Retrieve, update or delete note instances.
-    """
-    if request.method == 'PUT':
-        note = str(request.data.get('text', ''))
-        notes[key] = note
-        return note_repr(key)
-
-    elif request.method == 'DELETE':
-        notes.pop(key, None)
-        return '', status.HTTP_204_NO_CONTENT
-
-    # request.method == 'GET'
-    if key not in notes:
-        raise exceptions.NotFound()
-    return note_repr(key)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False, port=port, host='0.0.0.0', threaded=True)
